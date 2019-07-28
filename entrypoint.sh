@@ -4,7 +4,7 @@ error() {
     echo "Error: $*" >&2
 }
 
-generate_config() {
+init_srv_config() {
     servers=""
     priorities=""
 
@@ -26,7 +26,20 @@ generate_config() {
 
     export CONFIG_SERVERS=${servers}
     export CONFIG_PRIOTITIES=${priorities}
-    envsubst > /server/config.yml < /config.yml.tmpl
+}
+
+init_groups_config() {
+    groups=""
+    
+    LIST=$(env | grep -Eo '^ADMIN[0-9]+' | sort -u)
+    for admin in ${LIST}
+    do
+        groups="${groups}  ${!admin}:
+    - admin
+"
+    done
+
+    export CONFIG_GROUPS=${groups}
 }
  
 BUNGEE_JAR=${BUNGEE_HOME}/BungeeCord.jar
@@ -43,8 +56,12 @@ then
 fi
 
 echo "Generating config..."
-generate_config
+init_srv_config
+init_groups_config
+
+envsubst > /server/config.yml < /config.yml.tmpl
 cat /server/config.yml
+exit 1
 
 echo "Starting..."
 JVM_OPTS="-Xms${INIT_MEMORY:-${MEMORY}} -Xmx${MAX_MEMORY:-${MEMORY}} ${JVM_OPTS}"
