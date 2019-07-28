@@ -11,16 +11,17 @@ init_srv_config() {
     LIST=$(env | grep -Eo '^SRV[0-9]+' | sort -u)
     for srv in ${LIST}
     do
+        name="${srv}_NAME"
         address="${srv}_ADDRESS"
         motd="${srv}_MOTD"
         restricted="${srv}_RESTRICTED"
 
-        servers="${servers}  ${srv}:
+        servers="${servers}  ${!name:-${srv}}:
     address: ${!address}
     motd: '${!motd:-${srv}}'
     restricted: ${!restricted:-false}
 "
-        priorities="${priorities}      - ${srv}
+        priorities="${priorities}      - ${!name:-${srv}}
 "
     done
 
@@ -61,7 +62,6 @@ init_groups_config
 
 envsubst > /server/config.yml < /config.yml.tmpl
 cat /server/config.yml
-exit 1
 
 echo "Starting..."
 JVM_OPTS="-Xms${INIT_MEMORY:-${MEMORY}} -Xmx${MAX_MEMORY:-${MEMORY}} ${JVM_OPTS}"
