@@ -7,6 +7,7 @@ error() {
 init_srv_config() {
     servers=""
     priorities=""
+    forced_hosts=""
 
     LIST=$(env | grep -Eo '^SRV[0-9]+' | sort -u)
     for srv in ${LIST}
@@ -23,10 +24,13 @@ init_srv_config() {
 "
         priorities="${priorities}      - ${!name:-${srv}}
 "
+        forced_hosts="${forced_hosts}      ${!name:-${srv}}.${FORCED_HOSTS_DOMAIN}: ${!name:-${srv}}
+"
     done
 
     export CONFIG_SERVERS=${servers}
-    export CONFIG_PRIOTITIES=${priorities}
+    export CONFIG_PRIORITIES=${priorities}
+    export CONFIG_FORCED_HOSTS=${forced_hosts}
 }
 
 init_groups_config() {

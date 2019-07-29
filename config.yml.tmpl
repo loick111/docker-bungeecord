@@ -18,13 +18,13 @@ listeners:
   - query_port: ${PORT}
     motd: '${GLOBAL_MOTD}'
     priorities:
-${CONFIG_PRIOTITIES}
+${CONFIG_PRIORITIES}
     bind_local_address: true
     tab_list: GLOBAL_PING
     query_enabled: false
     host: 0.0.0.0:${PORT}
     forced_hosts:
-      pvp.md-5.net: pvp
+${CONFIG_FORCED_HOSTS}
     max_players: ${MAX_PLAYERS}
     tab_size: 60
     ping_passthrough: false
